@@ -7,20 +7,6 @@
     <string name="app_greeting_and_explanation">Hello &lt;b>%s&lt;/b>, welcome to the app!
         \n\nYour goal is to get from one country to another by crossing as few borders as possible.</string>
 
-    <string name="signin_other_error">There was an issue with sign in.  Please try again later.</string>
-    <string name="show_achievements">Show Achievements</string>
-    <string name="show_leaderboards">Show Leaderboards</string>
-    <string name="sign_in">Sign In</string>
-    <string name="sign_in_why">Sign in with Google to share your scores and achievements with your friends.</string>
-    <string name="you_are_signed_in">You are signed in with Google.</string>
-    <string name="sign_out">Sign out</string>
-    <string name="signing_in">Signing in with Google</string>
-    <string name="signing_out">Signing out</string>
-    <string name="signed_out_greeting">Hello, anonymous user (not signed in)!</string>
-    <string name="achievements_not_available">Please sign in to view achievements.</string>
-    <string name="leaderboards_not_available">Please sign in to view leaderboards.</string>
-    <string name="your_progress_will_be_uploaded">Uploading your achievements and score&#8230;</string>
-
     <string name="points_counter">points_counter</string>
     
     <string name="title_activity_solve_puzzle">Solve Puzzle</string>
