@@ -25,7 +25,8 @@
             android:name=".SolvePuzzle"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_solve_puzzle"
-            android:parentActivityName="atorch.shortestpaths.MainActivity" >
+            android:parentActivityName="atorch.shortestpaths.MainActivity"
+	    android:exported="false">
         </activity>
     </application>
 
