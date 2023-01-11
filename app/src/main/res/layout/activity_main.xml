@@ -1,0 +1,121 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+	android:layout_height="match_parent">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="atorch.shortestpaths.MainActivity" >
+    
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+    
+    <ProgressBar
+        
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingTop="@dimen/activity_vertical_margin_quadruple" >
+	</ProgressBar>
+	
+    <TextView
+        android:text="@string/creating_database"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+    	android:paddingTop="@dimen/activity_vertical_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+	
+    </LinearLayout>
+	
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/main_ui"
+        android:visibility="gone">
+    
+    <LinearLayout android:weightSum="2.618"
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal"
+    	android:paddingBottom="@dimen/activity_vertical_margin"
+    	android:paddingLeft="@dimen/activity_horizontal_margin"
+    	android:paddingRight="@dimen/activity_horizontal_margin"
+    	android:paddingTop="@dimen/activity_vertical_margin_half" >
+    
+    	<Button
+    	    android:layout_width="0dp"
+    	    android:layout_weight="1.618"
+	    	android:id="@+id/button_0"
+	    	android:layout_height="wrap_content"
+	    	android:onClick="startPuzzle"
+	    	android:text="@string/button_level_0" />
+    
+    </LinearLayout>
+    
+    <LinearLayout android:weightSum="2.618"
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal"
+    	android:paddingBottom="@dimen/activity_vertical_margin"
+    	android:paddingLeft="@dimen/activity_horizontal_margin"
+    	android:paddingRight="@dimen/activity_horizontal_margin"
+    	android:paddingTop="@dimen/activity_vertical_margin_half" >
+    
+    	<Button
+    	    android:layout_width="0dp"
+    	    android:layout_weight="1.618"
+	    	android:id="@+id/button_1"
+	    	android:layout_height="wrap_content"
+	    	android:onClick="startPuzzle"
+	    	android:text="@string/button_level_1" />
+    	
+    </LinearLayout>
+    
+    <LinearLayout android:weightSum="2.618"
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal"
+    	android:paddingBottom="@dimen/activity_vertical_margin"
+    	android:paddingLeft="@dimen/activity_horizontal_margin"
+    	android:paddingRight="@dimen/activity_horizontal_margin"
+    	android:paddingTop="@dimen/activity_vertical_margin_half" >
+    
+    	<Button
+    	    android:layout_width="0dp"
+    	    android:layout_weight="1.618"
+	    	android:id="@+id/button_2"
+	    	android:layout_height="wrap_content"
+	    	android:onClick="startPuzzle"
+	    	android:text="@string/button_level_2" />
+    
+    </LinearLayout>
+    
+    <TextView
+        android:id="@+id/greeting_and_explanation"
+        android:text="@string/app_explanation"
+        android:paddingBottom="@dimen/activity_vertical_margin_half"
+    	android:paddingTop="@dimen/activity_vertical_margin_half"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    
+    <TextView
+        android:id="@+id/points_statement"
+        android:paddingBottom="@dimen/activity_vertical_margin_half"
+    	android:paddingTop="@dimen/activity_vertical_margin_half"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
+</LinearLayout>
+</ScrollView>
+

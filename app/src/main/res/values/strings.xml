@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string name="app_name">Geography Puzzles</string>
+    <string name="app_explanation">Hello, welcome to the app!
+        \n\nYour goal is to get from one country to another by crossing as few borders as possible.</string>
+    <string name="app_greeting_and_explanation">Hello &lt;b>%s&lt;/b>, welcome to the app!
+        \n\nYour goal is to get from one country to another by crossing as few borders as possible.</string>
+
+    <string name="signin_other_error">There was an issue with sign in.  Please try again later.</string>
+    <string name="show_achievements">Show Achievements</string>
+    <string name="show_leaderboards">Show Leaderboards</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_in_why">Sign in with Google to share your scores and achievements with your friends.</string>
+    <string name="you_are_signed_in">You are signed in with Google.</string>
+    <string name="sign_out">Sign out</string>
+    <string name="signing_in">Signing in with Google</string>
+    <string name="signing_out">Signing out</string>
+    <string name="signed_out_greeting">Hello, anonymous user (not signed in)!</string>
+    <string name="achievements_not_available">Please sign in to view achievements.</string>
+    <string name="leaderboards_not_available">Please sign in to view leaderboards.</string>
+    <string name="your_progress_will_be_uploaded">Uploading your achievements and score&#8230;</string>
+
+    <string name="points_counter">points_counter</string>
+    
+    <string name="title_activity_solve_puzzle">Solve Puzzle</string>
+    <string name="title_activity_review_map">Review Map</string>
+    <string name="action_settings">Settings</string>
+    
+    <string name="arrow_description">An arrow pointing downward</string>
+    <string name="creating_database">Creating database&#8230;</string>
+    
+    <string name="points_statement_zero">You haven\'t earned any gold coins&#8230; time to show me what you can do!</string>
+    <plurals name="points_statement">
+        <item quantity="one">You\'ve earned &lt;b>%d gold coin&lt;/b> &#8212; nice start!</item>
+        <item quantity="other">You\'ve earned &lt;b>%d gold coins&lt;/b>.</item>
+    </plurals>
+    
+    <string name="button_level_0">Novice</string>
+    <string name="button_level_1">Traveler</string>
+    <string name="button_level_2">Voyager</string>
+    
+    <string name="level_1_locked">Do you have what it takes? Earn %s gold coins and I\'ll reconsider.</string>
+    <string name="level_2_locked">A voyager who hasn\'t earned %s gold coins? I doubt it. Now get out there and prove yourself!</string>
+    
+    <string name="button_give_up">Give up?</string>
+    <string name="give_up_message">What?! Are you seriously quitting on me?</string>
+    
+    <string name="button_back_to_main">Main Menu</string>
+    <string name="button_new_puzzle">New Puzzle</string>
+    <string name="button_review_map">Review Map</string>
+    
+    <string name="puzzle_statement_format_string">I\'m in &lt;b>%1$s&lt;/b> and I\'d like to get to &lt;b>%2$s&lt;/b>.</string>
+    <plurals name="path_length_statement">
+        <item quantity="one">Can you help me? I\'d like to cross as few borders as possible.  I\'ve heard I can get there by travelling through only %d other country.</item>
+        <item quantity="other">Can you help me? I\'d like to cross as few borders as possible.  I\'ve heard I can get there by travelling through only %d other countries.</item>
+    </plurals>
+    
+    <string-array name="correct_guess_congratulations">
+        <item>Excellent, we\'re making progress!</item>
+        <item>That\'s it, now we\'re talking!</item>
+        <item>Very nice work!</item>
+        <item>Wow &#8212; how did you know that?</item>
+        <item>Congratulations, that\'s correct!</item>
+        <item>Are you some sort of geography guru?</item>
+        <item>You have an excellent mental map, if I may say so myself.</item>
+        <item>Nice work! With a guide like you, we\'ll get there in no time.</item>
+        <item>You know what? I\'m glad I hired you.</item>
+        <item>Outstanding! Marvellous work!</item>
+        <item>You\'re moving so fast I can barely keep up.</item>
+    </string-array>
+    
+    <plurals name="reward">
+        <item quantity="one">You\'ve been a great guide &#8212; please accept this gold coin.</item>
+        <item quantity="other">You\'ve been a great guide &#8212; please accept these %d gold coins.</item>
+    </plurals>
+
+    <string name="where_next">Where should I go next?</string>
+    <string name="congratulations">We made it &#8212; congratulations!
+        \n\nWhat would you like to do next?</string>
+
+    <string-array name="countries">
+        <item>Afghanistan</item>
+        <item>Albania</item>
+        <item>Algeria</item>
+        <item>Andorra</item>
+        <item>Angola</item>
+        <item>Argentina</item>
+        <item>Armenia</item>
+        <item>Austria</item>
+        <item>Azerbaijan</item>
+        <item>Bangladesh</item>
+        <item>Belarus</item>
+        <item>Belgium</item>
+        <item>Belize</item>
+        <item>Benin</item>
+        <item>Bhutan</item>
+        <item>Bolivia</item>
+        <item>Bosnia and Herzegovina</item>
+        <item>Botswana</item>
+        <item>Brazil</item>
+        <item>Brunei</item>
+        <item>Bulgaria</item>
+        <item>Burkina Faso</item>
+        <item>Burma</item>
+        <item>Burundi</item>
+        <item>Cambodia</item>
+        <item>Cameroon</item>
+        <item>Canada</item>
+        <item>Central African Republic</item>
+        <item>Chad</item>
+        <item>Chile</item>
+        <item>People\'s Republic of China</item>
+        <item>Colombia</item>
+        <item>Democratic Republic of the Congo</item>
+        <item>Republic of the Congo</item>
+        <item>Costa Rica</item>
+        <item>Ivory Coast</item>
+        <item>Croatia</item>
+        <item>Cyprus</item>
+        <item>Czech Republic</item>
+        <item>Denmark</item>
+        <item>Djibouti</item>
+        <item>Dominican Republic</item>
+        <item>East Timor</item>
+        <item>Ecuador</item>
+        <item>Egypt</item>
+        <item>El Salvador</item>
+        <item>Equatorial Guinea</item>
+        <item>Eritrea</item>
+        <item>Estonia</item>
+        <item>Ethiopia</item>
+        <item>Finland</item>
+        <item>France</item>
+        <item>French Guiana</item>
+        <item>Gabon</item>
+        <item>The Gambia</item>
+        <item>Georgia</item>
+        <item>Germany</item>
+        <item>Ghana</item>
+        <item>Greece</item>
+        <item>Guatemala</item>
+        <item>Guinea</item>
+        <item>Guinea-Bissau</item>
+        <item>Guyana</item>
+        <item>Haiti</item>
+        <item>Honduras</item>
+        <item>Hungary</item>
+        <item>India</item>
+        <item>Indonesia</item>
+        <item>Iran</item>
+        <item>Iraq</item>
+        <item>Republic of Ireland</item>
+        <item>Israel</item>
+        <item>Italy</item>
+        <item>Jordan</item>
+        <item>Kazakhstan</item>
+        <item>Kenya</item>
+        <item>North Korea</item>
+        <item>South Korea</item>
+        <item>Kaliningrad Oblast ( Russian Exclave )</item>
+        <item>Kuwait</item>
+        <item>Kyrgyzstan</item>
+        <item>Laos</item>
+        <item>Latvia</item>
+        <item>Lebanon</item>
+        <item>Lesotho</item>
+        <item>Liberia</item>
+        <item>Libya</item>
+        <item>Liechtenstein</item>
+        <item>Lithuania</item>
+        <item>Luxembourg</item>
+        <item>Republic of Macedonia</item>
+        <item>Malawi</item>
+        <item>Malaysia</item>
+        <item>Mali</item>
+        <item>Mauritania</item>
+        <item>Mexico</item>
+        <item>Moldova</item>
+        <item>Monaco</item>
+        <item>Mongolia</item>
+        <item>Montenegro</item>
+        <item>Morocco</item>
+        <item>Mozambique</item>
+        <item>Namibia</item>
+        <item>Nepal</item>
+        <item>Netherlands</item>
+        <item>Kingdom of the Netherlands</item>
+        <item>Nicaragua</item>
+        <item>Niger</item>
+        <item>Nigeria</item>
+        <item>Norway</item>
+        <item>Oman</item>
+        <item>Pakistan</item>
+        <item>Panama</item>
+        <item>Papua New Guinea</item>
+        <item>Paraguay</item>
+        <item>Peru</item>
+        <item>Poland</item>
+        <item>Portugal</item>
+        <item>Qatar</item>
+        <item>Romania</item>
+        <item>Russia</item>
+        <item>Rwanda</item>
+        <item>San Marino</item>
+        <item>Saudi Arabia</item>
+        <item>Senegal</item>
+        <item>Serbia</item>
+        <item>Sierra Leone</item>
+        <item>Slovakia</item>
+        <item>Slovenia</item>
+        <item>Somalia</item>
+        <item>South Africa</item>
+        <item>South Sudan</item>
+        <item>Spain</item>
+        <item>Sri Lanka</item>
+        <item>Sudan</item>
+        <item>Suriname</item>
+        <item>Swaziland</item>
+        <item>Sweden</item>
+        <item>Switzerland</item>
+        <item>Syria</item>
+        <item>Tajikistan</item>
+        <item>Tanzania</item>
+        <item>Thailand</item>
+        <item>Togo</item>
+        <item>Tunisia</item>
+        <item>Turkey</item>
+        <item>Turkmenistan</item>
+        <item>Uganda</item>
+        <item>Ukraine</item>
+        <item>United Arab Emirates</item>
+        <item>United Kingdom</item>
+        <item>United States</item>
+        <item>Uruguay</item>
+        <item>Uzbekistan</item>
+        <item>Vatican City</item>
+        <item>Venezuela</item>
+        <item>Vietnam</item>
+        <item>Yemen</item>
+        <item>Zambia</item>
+        <item>Zimbabwe</item>
+        <item>Gibraltar</item>
+    </string-array>
+
+</resources>
