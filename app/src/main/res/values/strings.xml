@@ -2,10 +2,8 @@
 <resources>
     
     <string name="app_name">Geography Puzzles</string>
-    <string name="app_explanation">Hello, welcome to the app!
-        \n\nYour goal is to get from one country to another by crossing as few borders as possible.</string>
-    <string name="app_greeting_and_explanation">Hello &lt;b>%s&lt;/b>, welcome to the app!
-        \n\nYour goal is to get from one country to another by crossing as few borders as possible.</string>
+    <string name="app_explanation">Hello and welcome to the app!
+        \n\nYour goal is to get me from one country to another by crossing as few borders as possible. Why? That\'s quite nosy of you. Perhaps I\'m in trouble with the law and would like to avoid customs, who knows. Accomplish your task and I\'ll reward you handsomely with some of the gold coins I have sewn into my vest!</string>
 
     <string name="points_counter">points_counter</string>
     
