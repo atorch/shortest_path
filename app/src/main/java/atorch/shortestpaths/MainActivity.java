@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -28,8 +29,8 @@ import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int N_COUNTRIES_VISITED_LEVEL_1 = 8;
-    private static final int N_COUNTRIES_VISITED_LEVEL_2 = 24;
+    private static final int N_COUNTRIES_VISITED_LEVEL_1 = 10;
+    private static final int N_COUNTRIES_VISITED_LEVEL_2 = 25;
 
     public final static String LEVEL = "atorch.shortestpath.LEVEL";
 
@@ -39,12 +40,32 @@ public class MainActivity extends AppCompatActivity {
 
     public static boolean done_writing_summary = false;
     public static boolean done_writing_paths = false;
+    public static boolean done_writing_visit_count = false;
 
     public int n_countries_visited;
+
+    public String countCountiesVisited(SQLiteDatabase db) {
+        Cursor c = db.rawQuery(MySQLiteHelper.SQL_COUNT_COUNTRIES_VISITED,null);
+        c.moveToFirst();
+        return c.getString(0);
+    }
 
     private class WriteDatabaseTask extends AsyncTask<String, Void, String> {
         protected String doInBackground(String... table_name) {
             Resources res = getResources();
+
+            if (table_name[0] == MySQLiteHelper.VISIT_COUNT_TABLE_NAME) {
+                String[] countries = res.getStringArray(R.array.countries);
+                for (String country: countries) {
+                    ContentValues values = new ContentValues();
+                    // Initial state: we've visited every country zero times
+                    values.put(MySQLiteHelper.COL_COUNTRY_NAME, country);
+                    values.put(MySQLiteHelper.COL_COUNTRY_VISIT_COUNT, 0);
+                    db.insert(MySQLiteHelper.VISIT_COUNT_TABLE_NAME, null, values);
+                }
+                return ("wrote " + countries.length + " rows to visit count table");
+            }
+
             if (table_name[0] == MySQLiteHelper.SUMMARY_TABLE_NAME) {
                 InputStream inputStream = res.openRawResource(R.raw.graph_paths_summary);
                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -125,6 +146,8 @@ public class MainActivity extends AppCompatActivity {
                 done_writing_paths = true;
             } else if (returned_by_doInBackground.contains("summary")) {
                 done_writing_summary = true;
+            } else if (returned_by_doInBackground.contains("visit")) {
+                done_writing_visit_count = true;
             }
             if (done_writing_summary && done_writing_paths) {
                 removeBarAndAddUI();
@@ -180,6 +203,13 @@ public class MainActivity extends AppCompatActivity {
             done_writing_summary = true;
         }
 
+        int rows_visit_count = (int) DatabaseUtils.queryNumEntries(db, MySQLiteHelper.VISIT_COUNT_TABLE_NAME);
+        if (rows_visit_count == 0) {
+            new WriteDatabaseTask().execute(MySQLiteHelper.VISIT_COUNT_TABLE_NAME);
+        } else {
+            done_writing_visit_count = true;
+        }
+
         int rows_paths = (int) DatabaseUtils.queryNumEntries(db, MySQLiteHelper.PATH_TABLE_NAME);
         if (rows_paths == 0) {
             new WriteDatabaseTask().execute(MySQLiteHelper.PATH_TABLE_NAME);
@@ -187,15 +217,14 @@ public class MainActivity extends AppCompatActivity {
             done_writing_paths = true;
         }
 
-        if (done_writing_summary && done_writing_paths) {
+        if (done_writing_summary && done_writing_paths && done_writing_visit_count) {
             removeBarAndAddUI();
         }
     }
 
     private void updateCountriesVisited() {
         final Resources res = getResources();
-        SharedPreferences sharedPref = getSharedPreferences("atorch.shortestpaths.data", Context.MODE_PRIVATE);
-        n_countries_visited = sharedPref.getInt(getString(R.string.countries_visited_counter), 0);
+        n_countries_visited = Integer.parseInt(countCountiesVisited(db));
         TextView path_length_statement = (TextView) findViewById(R.id.countries_visited_statement);
         if (n_countries_visited == 0) {
             path_length_statement.setText(res.getString(R.string.countries_visited_statement_zero));
