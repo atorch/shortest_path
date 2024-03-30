@@ -44,6 +44,19 @@ public class MainActivity extends AppCompatActivity {
 
     public int n_countries_visited;
 
+    public String[] countriesNotYetVisited(SQLiteDatabase db) {
+        // TODO Handle case where <3 counties remain unvisited
+        String[] countries = new String[3];
+        Cursor c = db.rawQuery(MySQLiteHelper.SQL_COUNTRIES_NOT_YET_VISITED, null);
+        c.moveToFirst();
+        countries[0] = c.getString(0);
+        c.moveToNext();
+        countries[1] = c.getString(0);
+        c.moveToNext();
+        countries[2] = c.getString(0);
+        return countries;
+    }
+
     public String countCountiesVisited(SQLiteDatabase db) {
         Cursor c = db.rawQuery(MySQLiteHelper.SQL_COUNT_COUNTRIES_VISITED,null);
         c.moveToFirst();
@@ -225,12 +238,18 @@ public class MainActivity extends AppCompatActivity {
     private void updateCountriesVisited() {
         final Resources res = getResources();
         n_countries_visited = Integer.parseInt(countCountiesVisited(db));
-        TextView path_length_statement = (TextView) findViewById(R.id.countries_visited_statement);
+        TextView statement = (TextView) findViewById(R.id.countries_visited_statement);
+        String text;
         if (n_countries_visited == 0) {
-            path_length_statement.setText(res.getString(R.string.countries_visited_statement_zero));
+            text = res.getString(R.string.countries_visited_statement_zero);
         } else {
-            path_length_statement.setText(Html.fromHtml(res.getQuantityString(R.plurals.countries_visited_statement, n_countries_visited, n_countries_visited)));
+            text = res.getQuantityString(R.plurals.countries_visited_statement, n_countries_visited, n_countries_visited);
         }
+        String not_yet_visited_format = res.getString(R.string.counties_not_yet_visited);
+        String[] countries = countriesNotYetVisited(db);
+        String not_yet_visited = String.format(not_yet_visited_format, countries[0], countries[1], countries[2]);
+        text += "\n\n" + not_yet_visited;
+        statement.setText(Html.fromHtml(text));
     }
 
     private void removeBarAndAddUI() {

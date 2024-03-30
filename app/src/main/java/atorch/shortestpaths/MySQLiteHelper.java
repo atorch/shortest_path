@@ -36,6 +36,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             " (" + COL_COUNTRY_NAME + " TEXT, " + COL_COUNTRY_VISIT_COUNT + " INT)";
     private static final String SQL_DELETE_VISIT_COUNT = "DROP TABLE IF EXISTS " + VISIT_COUNT_TABLE_NAME;
 
+    // Countries not yet visited, in random order
+    public static final String SQL_COUNTRIES_NOT_YET_VISITED = "SELECT " + COL_COUNTRY_NAME + " FROM " +
+            VISIT_COUNT_TABLE_NAME + " WHERE " + COL_COUNTRY_VISIT_COUNT + " = 0 ORDER BY RANDOM()";
+
     public static final String SQL_COUNT_COUNTRIES_VISITED = "SELECT COUNT(" + COL_COUNTRY_NAME + ") FROM " +
              VISIT_COUNT_TABLE_NAME + " WHERE " + COL_COUNTRY_VISIT_COUNT + " > 0";
 
