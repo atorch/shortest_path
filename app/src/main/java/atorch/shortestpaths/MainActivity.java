@@ -155,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(String returned_by_doInBackground) {
+            // This .contains(...) pattern is really ugly
             if (returned_by_doInBackground.contains("path")) {
                 done_writing_paths = true;
             } else if (returned_by_doInBackground.contains("summary")) {
@@ -162,10 +163,13 @@ public class MainActivity extends AppCompatActivity {
             } else if (returned_by_doInBackground.contains("visit")) {
                 done_writing_visit_count = true;
             }
+            Toast.makeText(context, returned_by_doInBackground, Toast.LENGTH_SHORT).show();
+            // TODO Does including done_writing_visit_count here cause problems?
+            // TODO Why make it async anyhow?
             if (done_writing_summary && done_writing_paths) {
                 removeBarAndAddUI();
             }
-            Toast.makeText(context, returned_by_doInBackground, Toast.LENGTH_SHORT).show();
+
         }
     }
 
@@ -217,6 +221,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         int rows_visit_count = (int) DatabaseUtils.queryNumEntries(db, MySQLiteHelper.VISIT_COUNT_TABLE_NAME);
+        String toastText = "There are " + rows_visit_count + " rows in the visit count table";
+        Toast.makeText(context, toastText, Toast.LENGTH_LONG).show();
         if (rows_visit_count == 0) {
             new WriteDatabaseTask().execute(MySQLiteHelper.VISIT_COUNT_TABLE_NAME);
         } else {

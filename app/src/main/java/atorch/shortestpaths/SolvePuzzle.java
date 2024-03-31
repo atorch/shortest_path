@@ -233,6 +233,16 @@ public class SolvePuzzle extends AppCompatActivity {
                         user_progress++;
                         path_indicators = new_path_indicators;
                         addCountryVisited(context, user_answer);
+
+                        // TODO Put this in a fn
+                        ContentValues content = new ContentValues();
+                        content.put(MySQLiteHelper.COL_COUNTRY_NAME, user_answer);
+                        content.put(MySQLiteHelper.COL_COUNTRY_VISIT_COUNT, 1);  // TODO Get previous count and increment
+                        int rowsUpdated;
+                        rowsUpdated = db.update(MySQLiteHelper.VISIT_COUNT_TABLE_NAME, content, MySQLiteHelper.COL_COUNTRY_NAME + " = ?", new String[]{user_answer});
+
+                        Toast.makeText(context, Integer.toString(rowsUpdated) + " " + user_answer, Toast.LENGTH_LONG).show();
+
                         if (user_progress < path_length_inner) {
                             String congratulations = congratulations_array[random.nextInt(congratulations_array.length)];
                             Toast.makeText(context, congratulations, Toast.LENGTH_SHORT).show();
@@ -247,21 +257,6 @@ public class SolvePuzzle extends AppCompatActivity {
                             // TODO Update reward string
                             String reward = res.getQuantityString(R.plurals.reward, 0, 0);
                             // Toast.makeText(context, reward, Toast.LENGTH_LONG).show();
-
-                            // TODO Update DB
-                            // TODO First pass: tell DB we visited the final country
-                            // TODO Next ,tell DB we visited _every_ country along the path
-                            // String sqlUpdate = MySQLiteHelper.SQL_UPDATE_COUNTIES_VISITED;
-                            // Toast.makeText(context, sqlUpdate, Toast.LENGTH_LONG).show();
-                            // db.execSQL();
-
-                            ContentValues content = new ContentValues();
-                            content.put(MySQLiteHelper.COL_COUNTRY_NAME, user_answer);
-                            content.put(MySQLiteHelper.COL_COUNTRY_VISIT_COUNT, 1);  // TODO Get previous count and increment
-                            int rowsUpdated;
-                            rowsUpdated = db.update(MySQLiteHelper.VISIT_COUNT_TABLE_NAME, content, MySQLiteHelper.COL_COUNTRY_NAME + " = ?", new String[]{user_answer});
-
-                            Toast.makeText(context, Integer.toString(rowsUpdated) + " " + user_answer, Toast.LENGTH_LONG).show();
 
                             LinearLayout buttons = (LinearLayout) findViewById(R.id.buttons);
                             buttons.setVisibility(View.VISIBLE);
