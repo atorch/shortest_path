@@ -4,17 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -63,114 +58,87 @@ public class MainActivity extends AppCompatActivity {
         return c.getString(0);
     }
 
-    private class WriteDatabaseTask extends AsyncTask<String, Void, String> {
-        protected String doInBackground(String... table_name) {
-            Resources res = getResources();
-
-            if (table_name[0] == MySQLiteHelper.VISIT_COUNT_TABLE_NAME) {
-                String[] countries = res.getStringArray(R.array.countries);
-                for (String country: countries) {
-                    ContentValues values = new ContentValues();
-                    // Initial state: we've visited every country zero times
-                    values.put(MySQLiteHelper.COL_COUNTRY_NAME, country);
-                    values.put(MySQLiteHelper.COL_COUNTRY_VISIT_COUNT, 0);
-                    db.insert(MySQLiteHelper.VISIT_COUNT_TABLE_NAME, null, values);
-                }
-                return ("wrote " + countries.length + " rows to visit count table");
-            }
-
-            if (table_name[0] == MySQLiteHelper.SUMMARY_TABLE_NAME) {
-                InputStream inputStream = res.openRawResource(R.raw.graph_paths_summary);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                int from, to, path_length;
-                db.beginTransaction();
-                try {
-                    String line = reader.readLine();  // Skip header in first line
-                    while ((line = reader.readLine()) != null) {
-                        String[] RowData = line.split(",");
-
-                        from = Integer.parseInt(RowData[0]);
-                        to = Integer.parseInt(RowData[1]);
-                        path_length = Integer.parseInt(RowData[2]);
-
-                        ContentValues values = new ContentValues();
-                        values.put(MySQLiteHelper.COL_FROM, from);
-                        values.put(MySQLiteHelper.COL_TO, to);
-                        values.put(MySQLiteHelper.COL_PATH_LENGTH, path_length);
-
-                        db.insert(MySQLiteHelper.SUMMARY_TABLE_NAME, null, values);
-                    }
-                } catch (IOException ex) {
-                } finally {
-                    try {
-                        inputStream.close();
-                    } catch (IOException e) {
-                    }
-                }
-                db.setTransactionSuccessful();
-                db.endTransaction();
-
-                int rows_summary = (int) DatabaseUtils.queryNumEntries(db, MySQLiteHelper.SUMMARY_TABLE_NAME);
-                return ("wrote " + rows_summary + " rows to summary table");
-            }
-
-            if (table_name[0] == MySQLiteHelper.PATH_TABLE_NAME) {
-                InputStream inputStream = res.openRawResource(R.raw.graph_paths_subset);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                int from, to;
-                String path;
-                db.beginTransaction();
-                try {
-                    String line = reader.readLine();  // Skip header in first line
-                    while ((line = reader.readLine()) != null) {
-                        String[] RowData = line.split(",");
-
-                        from = Integer.parseInt(RowData[0]);
-                        to = Integer.parseInt(RowData[1]);
-                        path = RowData[2];
-
-                        ContentValues values = new ContentValues();
-                        values.put(MySQLiteHelper.COL_FROM, from);
-                        values.put(MySQLiteHelper.COL_TO, to);
-                        values.put(MySQLiteHelper.COL_PATH, path);
-
-                        db.insert(MySQLiteHelper.PATH_TABLE_NAME, null, values);
-                    }
-                } catch (IOException ex) {
-                } finally {
-                    try {
-                        inputStream.close();
-                    } catch (IOException e) {
-                    }
-                }
-                db.setTransactionSuccessful();
-                db.endTransaction();
-
-                int rows_paths = (int) DatabaseUtils.queryNumEntries(db, MySQLiteHelper.PATH_TABLE_NAME);
-                return ("wrote " + rows_paths + " rows to path table");
-            }
-            return ("unknown table name");
+    public void initializeVisitCountTable() {
+        Resources res = getResources();
+        String[] countries = res.getStringArray(R.array.countries);
+        for (String country: countries) {
+            ContentValues values = new ContentValues();
+            // Initial state: we've visited every country zero times
+            values.put(MySQLiteHelper.COL_COUNTRY_NAME, country);
+            values.put(MySQLiteHelper.COL_COUNTRY_VISIT_COUNT, 0);
+            db.insert(MySQLiteHelper.VISIT_COUNT_TABLE_NAME, null, values);
         }
+    }
 
-        protected void onPostExecute(String returned_by_doInBackground) {
-            // This .contains(...) pattern is really ugly
-            if (returned_by_doInBackground.contains("path")) {
-                done_writing_paths = true;
-            } else if (returned_by_doInBackground.contains("summary")) {
-                done_writing_summary = true;
-            } else if (returned_by_doInBackground.contains("visit")) {
-                done_writing_visit_count = true;
-            }
-            Toast.makeText(context, returned_by_doInBackground, Toast.LENGTH_SHORT).show();
-            // TODO Does including done_writing_visit_count here cause problems?
-            // TODO Why make it async anyhow?
-            if (done_writing_summary && done_writing_paths) {
-                removeBarAndAddUI();
-            }
+    public void initializeSummaryTable() {
+        Resources res = getResources();
+        InputStream inputStream = res.openRawResource(R.raw.graph_paths_summary);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
+        int from, to, path_length;
+        db.beginTransaction();
+        try {
+            String line = reader.readLine();  // Skip header in first line
+            while ((line = reader.readLine()) != null) {
+                String[] RowData = line.split(",");
+
+                from = Integer.parseInt(RowData[0]);
+                to = Integer.parseInt(RowData[1]);
+                path_length = Integer.parseInt(RowData[2]);
+
+                ContentValues values = new ContentValues();
+                values.put(MySQLiteHelper.COL_FROM, from);
+                values.put(MySQLiteHelper.COL_TO, to);
+                values.put(MySQLiteHelper.COL_PATH_LENGTH, path_length);
+
+                db.insert(MySQLiteHelper.SUMMARY_TABLE_NAME, null, values);
+            }
+        } catch (IOException ex) {
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+            }
         }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+
+    }
+
+    public void initializePathsTable() {
+        Resources res = getResources();
+        InputStream inputStream = res.openRawResource(R.raw.graph_paths_subset);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        int from, to;
+        String path;
+        db.beginTransaction();
+        try {
+            String line = reader.readLine();  // Skip header in first line
+            while ((line = reader.readLine()) != null) {
+                String[] RowData = line.split(",");
+
+                from = Integer.parseInt(RowData[0]);
+                to = Integer.parseInt(RowData[1]);
+                path = RowData[2];
+
+                ContentValues values = new ContentValues();
+                values.put(MySQLiteHelper.COL_FROM, from);
+                values.put(MySQLiteHelper.COL_TO, to);
+                values.put(MySQLiteHelper.COL_PATH, path);
+
+                db.insert(MySQLiteHelper.PATH_TABLE_NAME, null, values);
+            }
+        } catch (IOException ex) {
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+            }
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+
     }
 
     @SuppressLint("StringFormatMatches")
@@ -215,30 +183,21 @@ public class MainActivity extends AppCompatActivity {
 
         int rows_summary = (int) DatabaseUtils.queryNumEntries(db, MySQLiteHelper.SUMMARY_TABLE_NAME);
         if (rows_summary == 0) {
-            new WriteDatabaseTask().execute(MySQLiteHelper.SUMMARY_TABLE_NAME);
-        } else {
-            done_writing_summary = true;
+            initializeSummaryTable();
         }
 
         int rows_visit_count = (int) DatabaseUtils.queryNumEntries(db, MySQLiteHelper.VISIT_COUNT_TABLE_NAME);
         String toastText = "There are " + rows_visit_count + " rows in the visit count table";
         Toast.makeText(context, toastText, Toast.LENGTH_LONG).show();
         if (rows_visit_count == 0) {
-            new WriteDatabaseTask().execute(MySQLiteHelper.VISIT_COUNT_TABLE_NAME);
-        } else {
-            done_writing_visit_count = true;
+            initializeVisitCountTable();
         }
 
         int rows_paths = (int) DatabaseUtils.queryNumEntries(db, MySQLiteHelper.PATH_TABLE_NAME);
         if (rows_paths == 0) {
-            new WriteDatabaseTask().execute(MySQLiteHelper.PATH_TABLE_NAME);
-        } else {
-            done_writing_paths = true;
+            initializePathsTable();
         }
-
-        if (done_writing_summary && done_writing_paths && done_writing_visit_count) {
-            removeBarAndAddUI();
-        }
+        removeBarAndAddUI();
     }
 
     private void updateCountriesVisited() {
