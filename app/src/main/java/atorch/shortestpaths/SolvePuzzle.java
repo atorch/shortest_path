@@ -122,8 +122,9 @@ public class SolvePuzzle extends AppCompatActivity {
         alert.show();
     }
 
-    private void addDestinationCountry(Context context, Resources res) {
-        // Called when the user has correctly entered the last country before destination
+    private void reachedDestinationCountry(Context context, Resources res) {
+        // Update the UI when the user has correctly entered the last country before destination,
+        // which means we've reached the destination (we don't ask the user to input the destination country)
         LinearLayout countries_visited = (LinearLayout) findViewById(R.id.countries_visited);
         TextView destination_country = new TextView(context);
         destination_country.setText(country_to);
@@ -234,14 +235,11 @@ public class SolvePuzzle extends AppCompatActivity {
                         path_indicators = new_path_indicators;
                         addCountryVisited(context, user_answer);
 
-                        // TODO Put this in a fn
+                        // TODO Put this in a fn, and call it for very last country seen
                         ContentValues content = new ContentValues();
                         content.put(MySQLiteHelper.COL_COUNTRY_NAME, user_answer);
                         content.put(MySQLiteHelper.COL_COUNTRY_VISIT_COUNT, 1);  // TODO Get previous count and increment
-                        int rowsUpdated;
-                        rowsUpdated = db.update(MySQLiteHelper.VISIT_COUNT_TABLE_NAME, content, MySQLiteHelper.COL_COUNTRY_NAME + " = ?", new String[]{user_answer});
-
-                        Toast.makeText(context, Integer.toString(rowsUpdated) + " " + user_answer, Toast.LENGTH_LONG).show();
+                        db.update(MySQLiteHelper.VISIT_COUNT_TABLE_NAME, content, MySQLiteHelper.COL_COUNTRY_NAME + " = ?", new String[]{user_answer});
 
                         if (user_progress < path_length_inner) {
                             String congratulations = congratulations_array[random.nextInt(congratulations_array.length)];
@@ -252,11 +250,10 @@ public class SolvePuzzle extends AppCompatActivity {
                             imm.hideSoftInputFromWindow(country_input.getWindowToken(), 0);
                             country_input.setVisibility(View.GONE);
 
-                            addDestinationCountry(context, res);
+                            reachedDestinationCountry(context, res);
 
-                            // TODO Update reward string
-                            String reward = res.getQuantityString(R.plurals.reward, 0, 0);
-                            // Toast.makeText(context, reward, Toast.LENGTH_LONG).show();
+                            String greatGuide = res.getString(R.string.great_guide);
+                            Toast.makeText(context, greatGuide, Toast.LENGTH_LONG).show();
 
                             LinearLayout buttons = (LinearLayout) findViewById(R.id.buttons);
                             buttons.setVisibility(View.VISIBLE);

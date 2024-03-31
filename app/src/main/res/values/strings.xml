@@ -57,15 +57,14 @@
         <item>You\'re moving so fast I can barely keep up.</item>
     </string-array>
     
-    <plurals name="reward">
-        <item quantity="one">You\'ve been a great guide &#8212; where will you take me next?</item>
-        <item quantity="other">You\'ve been a great guide, thank you!</item>
-    </plurals>
+    <string name="great_guide">You\'ve been a great guide &#8212; where will you take me next?</string>
 
     <string name="where_next">Where should I go next?</string>
     <string name="congratulations">We made it &#8212; congratulations!
         \n\nWhat would you like to do next?</string>
 
+    // TODO Does the app not know about Western Sahara?
+    // But does it also think that Mauritania doesn't border directly with Morocco?
     <string-array name="countries">
         <item>Afghanistan</item>
         <item>Albania</item>

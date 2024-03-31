@@ -33,10 +33,6 @@ public class MainActivity extends AppCompatActivity {
     public static MySQLiteHelper mSQLiteHelper;
     public static SQLiteDatabase db;
 
-    public static boolean done_writing_summary = false;
-    public static boolean done_writing_paths = false;
-    public static boolean done_writing_visit_count = false;
-
     public int n_countries_visited;
 
     public String[] countriesNotYetVisited(SQLiteDatabase db) {
@@ -187,8 +183,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         int rows_visit_count = (int) DatabaseUtils.queryNumEntries(db, MySQLiteHelper.VISIT_COUNT_TABLE_NAME);
-        String toastText = "There are " + rows_visit_count + " rows in the visit count table";
-        Toast.makeText(context, toastText, Toast.LENGTH_LONG).show();
         if (rows_visit_count == 0) {
             initializeVisitCountTable();
         }
@@ -218,6 +212,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void removeBarAndAddUI() {
+        // Remove the "progress bar" (spinning wheel) that is displayed
+        // momentarily before we load data into the database
         LinearLayout barLayout = (LinearLayout) findViewById(R.id.progress_bar);
         barLayout.setVisibility(View.GONE);
 
