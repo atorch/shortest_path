@@ -1,7 +1,6 @@
 package atorch.shortestpaths;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -42,9 +41,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     public static final String SQL_COUNT_COUNTRIES_VISITED = "SELECT COUNT(" + COL_COUNTRY_NAME + ") FROM " +
              VISIT_COUNT_TABLE_NAME + " WHERE " + COL_COUNTRY_VISIT_COUNT + " > 0";
-
-    // public static final String SQL_UPDATE_COUNTIES_VISITED = "UPDATE " + VISIT_COUNT_TABLE_NAME +
-    //         " SET " + COL_COUNTRY_VISIT_COUNT + " = " + COL_COUNTRY_VISIT_COUNT + " + 1 WHERE " + COL_COUNTRY_NAME + " = '%s'";
 
     public static final int DATABASE_VERSION = 3;  // Increment the version whenever you change the schema
     public static final String DATABASE_NAME = "atorch_shortestpath_db";

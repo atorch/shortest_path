@@ -8,7 +8,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -70,8 +69,7 @@ public class SolvePuzzle extends AppCompatActivity {
         String[] projection_path = {MySQLiteHelper.COL_PATH};
         String where_from_to = MySQLiteHelper.COL_FROM + "=? and " + MySQLiteHelper.COL_TO + "=?";
         String[] from_to_conditions = {String.valueOf(country_from_index), String.valueOf(country_to_index)};
-        Cursor c = db.query(MySQLiteHelper.PATH_TABLE_NAME, projection_path, where_from_to, from_to_conditions, null, null, null);
-        return c;
+        return db.query(MySQLiteHelper.PATH_TABLE_NAME, projection_path, where_from_to, from_to_conditions, null, null, null);
     }
 
     private void setPuzzleStatement(Resources res) {
@@ -192,7 +190,7 @@ public class SolvePuzzle extends AppCompatActivity {
             paths = new String[number_of_paths][path_length_inner];
             path_indicators = new boolean[number_of_paths];  // Paths with which current answer is consistent
             Arrays.fill(path_indicators, true);
-            String[] current_path_tokenized = new String[path_length_inner];
+            String[] current_path_tokenized;
             int i = 0;
             String current_path;
             while (c2.moveToNext()) {
