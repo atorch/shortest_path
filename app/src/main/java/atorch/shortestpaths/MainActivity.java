@@ -10,6 +10,7 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -197,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
     private void updateCountriesVisited() {
         final Resources res = getResources();
         n_countries_visited = Integer.parseInt(countCountiesVisited(db));
-        TextView statement = (TextView) findViewById(R.id.countries_visited_statement);
+        TextView statement = findViewById(R.id.countries_visited_statement);
         String text;
         if (n_countries_visited == 0) {
             text = res.getString(R.string.countries_visited_statement_zero);
@@ -207,19 +208,23 @@ public class MainActivity extends AppCompatActivity {
         String not_yet_visited_format = res.getString(R.string.counties_not_yet_visited);
         String[] countries = countriesNotYetVisited(db);
         String not_yet_visited = String.format(not_yet_visited_format, countries[0], countries[1], countries[2]);
+
         text += "\n\n" + not_yet_visited;
         statement.setText(Html.fromHtml(text));
+
+        TextView repoLink = findViewById(R.id.repo_link);
+        repoLink.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     private void removeBarAndAddUI() {
         // Remove the "progress bar" (spinning wheel) that is displayed
         // momentarily before we load data into the database
-        LinearLayout barLayout = (LinearLayout) findViewById(R.id.progress_bar);
+        LinearLayout barLayout = findViewById(R.id.progress_bar);
         barLayout.setVisibility(View.GONE);
 
         updateCountriesVisited();
 
-        LinearLayout ui = (LinearLayout) findViewById(R.id.main_ui);
+        LinearLayout ui = findViewById(R.id.main_ui);
         ui.setVisibility(View.VISIBLE);
     }
 
