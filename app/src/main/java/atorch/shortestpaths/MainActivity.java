@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int N_COUNTRIES_VISITED_LEVEL_1 = 10;
     private static final int N_COUNTRIES_VISITED_LEVEL_2 = 25;
 
-    public final static String LEVEL = "atorch.shortestpath.LEVEL";
+    public final static String LEVEL = "atorch.shortestpaths.LEVEL";
 
     public static Context context;
     public static MySQLiteHelper mSQLiteHelper;
@@ -47,12 +47,6 @@ public class MainActivity extends AppCompatActivity {
         c.moveToNext();
         countries[2] = c.getString(0);
         return countries;
-    }
-
-    public String countCountiesVisited(SQLiteDatabase db) {
-        Cursor c = db.rawQuery(MySQLiteHelper.SQL_COUNT_COUNTRIES_VISITED,null);
-        c.moveToFirst();
-        return c.getString(0);
     }
 
     public void initializeVisitCountTable() {
@@ -193,11 +187,13 @@ public class MainActivity extends AppCompatActivity {
             initializePathsTable();
         }
         removeBarAndAddUI();
+
+        AppRater.app_launched(this);
     }
 
     private void updateCountriesVisited() {
         final Resources res = getResources();
-        n_countries_visited = Integer.parseInt(countCountiesVisited(db));
+        n_countries_visited = Integer.parseInt(MySQLiteHelper.countCountiesVisited(db));
         TextView statement = findViewById(R.id.countries_visited_statement);
         String text;
         if (n_countries_visited == 0) {
@@ -207,6 +203,8 @@ public class MainActivity extends AppCompatActivity {
         }
         String not_yet_visited_format = res.getString(R.string.counties_not_yet_visited);
         String[] countries = countriesNotYetVisited(db);
+        // TODO Handle case where <3 counties remain unvisited,
+        // likely bug here as written (but it'll take a while for anyone to get there, especially if some countries are not reachable)
         String not_yet_visited = String.format(not_yet_visited_format, countries[0], countries[1], countries[2]);
 
         text += "\n\n" + not_yet_visited;

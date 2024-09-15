@@ -1,6 +1,7 @@
 package atorch.shortestpaths;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -47,6 +48,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     public MySQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    public static String countCountiesVisited(SQLiteDatabase db) {
+        Cursor c = db.rawQuery(MySQLiteHelper.SQL_COUNT_COUNTRIES_VISITED,null);
+        c.moveToFirst();
+        return c.getString(0);
     }
 
     @Override

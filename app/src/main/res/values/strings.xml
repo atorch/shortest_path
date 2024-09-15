@@ -231,4 +231,10 @@
         <item>Gibraltar</item>
     </string-array>
 
+    <string name="apprater_title">Rate Shortest Path</string>
+    <string name="apprater_message">Enjoying the app? Please take a moment to rate the app in the Play Store. Every review counts. Thank you for helping out!</string>
+    <string name="apprater_never_button">Never</string>
+    <string name="apprater_later_button">Maybe Later</string>
+    <string name="apprater_rate_button">Rate It!</string>
+
 </resources>
