@@ -3,9 +3,10 @@
     
     <string name="app_name">Geography Puzzles</string>
     <string name="app_explanation">Hello and welcome to the app!
-        \n\nYour goal is to get me from one country to another by crossing as few borders as possible. Why? That\'s quite nosy of you. Perhaps I\'m in trouble with the law and would like to avoid customs, who knows. Accomplish your task and I\'ll reward you handsomely with some of the gold coins I have sewn into my vest!</string>
+        \n\nYour goal is to get me from one country to another by crossing as few borders as possible. Why? That\'s quite nosy of you. Perhaps I\'m in trouble with the law and would like to avoid customs, who knows. Let\'s get moving!
+    \n\nThe more countries you visit, the most I\'ll trust you to guide me on long trips.</string>
 
-    <string name="points_counter">points_counter</string>
+    <string name="countries_visited_counter">countries_visited_counter</string>
     
     <string name="title_activity_solve_puzzle">Solve Puzzle</string>
     <string name="title_activity_review_map">Review Map</string>
@@ -14,18 +15,22 @@
     <string name="arrow_description">An arrow pointing downward</string>
     <string name="creating_database">Creating database&#8230;</string>
     
-    <string name="points_statement_zero">You haven\'t earned any gold coins&#8230; time to show me what you can do!</string>
-    <plurals name="points_statement">
-        <item quantity="one">You\'ve earned &lt;b>%d gold coin&lt;/b> &#8212; nice start!</item>
-        <item quantity="other">You\'ve earned &lt;b>%d gold coins&lt;/b>.</item>
+    <string name="countries_visited_statement_zero">You haven\'t visited any countries &#8230; let\'s start with some short trips and see how you do.</string>
+    <plurals name="countries_visited_statement">
+        <item quantity="one">You\'ve taken me to &lt;b>%d country&lt;/b> &#8212; nice start!</item>
+        <item quantity="other">You\'ve taken me to &lt;b>%d different countries&lt;/b>!</item>
     </plurals>
-    
+
+    <string name="counties_not_yet_visited">We still have\'t been to %s, %s or %s. Let\'s get out there and travel the world!</string>
+
+    <string name="repo_link">If you\'d like to contribute to the app, or see how it was made, have a look at its\u00A0<a href="https://github.com/atorch/shortest_path">github repo</a>.</string>
+
     <string name="button_level_0">Novice</string>
     <string name="button_level_1">Traveler</string>
     <string name="button_level_2">Voyager</string>
     
-    <string name="level_1_locked">Do you have what it takes? Earn %s gold coins and I\'ll reconsider.</string>
-    <string name="level_2_locked">A voyager who hasn\'t earned %s gold coins? I doubt it. Now get out there and prove yourself!</string>
+    <string name="level_1_locked">Do you have what it takes? Visit %s different countries and I\'ll reconsider.</string>
+    <string name="level_2_locked">A voyager who hasn\'t even been to %s countries? I doubt it. You need to prove yourself!</string>
     
     <string name="button_give_up">Give up?</string>
     <string name="give_up_message">What?! Are you seriously quitting on me?</string>
@@ -54,15 +59,14 @@
         <item>You\'re moving so fast I can barely keep up.</item>
     </string-array>
     
-    <plurals name="reward">
-        <item quantity="one">You\'ve been a great guide &#8212; please accept this gold coin.</item>
-        <item quantity="other">You\'ve been a great guide &#8212; please accept these %d gold coins.</item>
-    </plurals>
+    <string name="great_guide">You\'ve been a great guide &#8212; where will you take me next?</string>
 
     <string name="where_next">Where should I go next?</string>
     <string name="congratulations">We made it &#8212; congratulations!
         \n\nWhat would you like to do next?</string>
 
+    // TODO Does the app not know about Western Sahara?
+    // But does it also think that Mauritania doesn't border directly with Morocco?
     <string-array name="countries">
         <item>Afghanistan</item>
         <item>Albania</item>
@@ -142,7 +146,7 @@
         <item>Kenya</item>
         <item>North Korea</item>
         <item>South Korea</item>
-        <item>Kaliningrad Oblast ( Russian Exclave )</item>
+        <item>Russian exclave of Kaliningrad</item>
         <item>Kuwait</item>
         <item>Kyrgyzstan</item>
         <item>Laos</item>
@@ -226,5 +230,11 @@
         <item>Zimbabwe</item>
         <item>Gibraltar</item>
     </string-array>
+
+    <string name="apprater_title">Rate Shortest Path</string>
+    <string name="apprater_message">Enjoying the app? Please take a moment to rate the app in the Play Store. Every review counts. Thank you for helping out!</string>
+    <string name="apprater_never_button">Never</string>
+    <string name="apprater_later_button">Maybe Later</string>
+    <string name="apprater_rate_button">Rate It!</string>
 
 </resources>
