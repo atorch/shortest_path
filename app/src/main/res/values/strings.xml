@@ -18,10 +18,10 @@
     <string name="countries_visited_statement_zero">You haven\'t visited any countries &#8230; let\'s start with some short trips and see how you do.</string>
     <plurals name="countries_visited_statement">
         <item quantity="one">You\'ve taken me to &lt;b>%d country&lt;/b> &#8212; nice start!</item>
-        <item quantity="other">You\'ve taken me to &lt;b>%d different countries&lt;/b>!</item>
+        <item quantity="other">You\'ve taken me to &lt;b>%d different countries&lt;/b>.</item>
     </plurals>
 
-    <string name="counties_not_yet_visited">We still have\'t been to %s, %s or %s. Let\'s get out there and travel the world!</string>
+    <string name="counties_not_yet_visited">We still haven\'t been to %s, %s or %s, let\'s get out there and travel the world!</string>
 
     <string name="repo_link">If you\'d like to contribute to the app, or see how it was made, have a look at its\u00A0<a href="https://github.com/atorch/shortest_path">github repo</a>.</string>
 
