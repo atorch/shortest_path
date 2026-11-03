@@ -16,8 +16,10 @@ import androidx.core.view.WindowInsetsCompat;
  *
  * <p>Apps targeting API 35+ are always drawn edge-to-edge on Android 15+ (and API 36 removed the opt-out),
  * so the app now draws behind the status and navigation bars on every Android version.
- * The AppCompat action bar keeps itself below the status bar. Content needs padding so that the
- * navigation bar and display cutouts don't cover it.
+ * The AppCompat action bar keeps itself below the status bar, but the content doesn't: with edge-to-edge,
+ * AppCompat lays the content out from the top of the window and adds the action bar's height to the
+ * top inset instead. So content has to keep itself clear of the action bar, the navigation bar and display
+ * cutouts.
  *
  * <p>Edge-to-edge also means windowSoftInputMode="adjustResize" no longer resizes the window when the
  * keyboard opens, so we do the resizing ourselves (see {@link #fitToSystemBarsAndKeyboard}).
@@ -48,10 +50,11 @@ final class SystemBars {
     }
 
     /**
-     * Keeps view clear of the navigation bar, cutouts and the keyboard. The top is left alone
-     * because the action bar already sits below the status bar.
+     * Keeps view clear of the action bar, the navigation bar, cutouts and the keyboard.
      *
      * <ul>
+     *   <li>Status bar and action bar: a top margin, so content never scrolls up behind the transparent
+     *       status bar above the action bar.</li>
      *   <li>Navigation bar and cutouts: padding, with clipToPadding off, so scrolling content still
      *       draws behind the (translucent) navigation bar, and its last item can scroll fully into view.</li>
      *   <li>Keyboard: a bottom margin, which shrinks the view to the area above the keyboard, just like
@@ -78,11 +81,15 @@ final class SystemBars {
             // The keyboard covers the navigation bar, so only pad for whatever part of it the keyboard doesn't cover
             v.setPadding(left + bars.left, top, right + bars.right, bottom + Math.max(bars.bottom - keyboard, 0));
 
+            // bars.top includes the action bar (see the class comment)
             ViewGroup.LayoutParams params = v.getLayoutParams();
-            if (params instanceof ViewGroup.MarginLayoutParams
-                    && ((ViewGroup.MarginLayoutParams) params).bottomMargin != keyboard) {
-                ((ViewGroup.MarginLayoutParams) params).bottomMargin = keyboard;
-                v.setLayoutParams(params);
+            if (params instanceof ViewGroup.MarginLayoutParams) {
+                ViewGroup.MarginLayoutParams margins = (ViewGroup.MarginLayoutParams) params;
+                if (margins.topMargin != bars.top || margins.bottomMargin != keyboard) {
+                    margins.topMargin = bars.top;
+                    margins.bottomMargin = keyboard;
+                    v.setLayoutParams(margins);
+                }
             }
             return insets;
         });
