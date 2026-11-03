@@ -1,6 +1,7 @@
 package atorch.shortestpaths;
 
 import android.content.ContentValues;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -32,27 +33,35 @@ import androidx.core.text.HtmlCompat;
 
 public class SolvePuzzle extends AppCompatActivity {
 
-    public final static String COUNTRY_TO = "atorch.shortestpaths.COUNTRY_TO";
+    // Saved instance state: enough to rebuild the puzzle after Android recreates this activity
+    // (for example after killing the app in the background, or when dark mode is switched on)
+    private static final String STATE_FROM = "atorch.shortestpaths.STATE_FROM";
+    private static final String STATE_TO = "atorch.shortestpaths.STATE_TO";
+    private static final String STATE_ROUTE = "atorch.shortestpaths.STATE_ROUTE";
 
-    static TextView root_country;
-    static ImageView arrow;
+    private TextView root_country;
+    private ImageView arrow;
+    private AutoCompleteTextView country_input;
 
-    public static int level;
+    private int level;
 
-    static String[] congratulations_array;
+    private String[] congratulations_array;
 
-    static String[] countries;
-    static int country_from_index;
-    static int country_to_index;
-    static String country_from;
-    static String country_to;
+    private String[] countries;
+    private int country_from_index;
+    private int country_to_index;
+    private String country_from;
+    private String country_to;
 
-    static int path_length;
-    static int path_length_inner;  // Equal to path_length - 2, i.e. number of countries user has to input
-    static int number_of_paths;
-    static String paths[][];  // Paths[i] is an array of country names
-    static boolean path_indicators[];  // When user's guess is consistent with paths[i], path_indicators[i] will be true
-    static int user_progress;  // How far along path user has traveled
+    private int path_length;
+    private int path_length_inner;  // Equal to path_length - 2, i.e. number of countries user has to input
+    private int number_of_paths;
+    private String[][] paths;  // Paths[i] is an array of country names
+    private boolean[] path_indicators;  // When user's guess is consistent with paths[i], path_indicators[i] will be true
+    private int user_progress;  // How far along path user has traveled
+    private final ArrayList<String> user_route = new ArrayList<>();  // Countries the user has correctly entered, in order
+
+    private SQLiteDatabase db;
 
     public static final Random random = new Random();
 
@@ -139,137 +148,174 @@ public class SolvePuzzle extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            // TODO This is most likely wrong
-            country_to = savedInstanceState.getString(COUNTRY_TO);
+        // Always build the screen, including when Android recreates this activity
+        // (savedInstanceState != null), otherwise the user gets a blank screen
+        setContentView(R.layout.activity_solve_puzzle);
+        SystemBars.setUp(this);
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            level = intent.getIntExtra(MainActivity.LEVEL, 0);
+        }
+        int path_length_lower = 3 + 2 * level;
+        int path_length_upper = 4 + 2 * level;
+        if (level == 2) {
+            path_length_upper = 20;  // Not binding; current maximum in data is 9
+        }
+
+        final ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
+
+        final Resources res = getResources();
+        countries = res.getStringArray(R.array.countries);
+        congratulations_array = res.getStringArray(R.array.correct_guess_congratulations);
+
+        final Context context = getApplicationContext();
+        MySQLiteHelper mSQLiteHelper = new MySQLiteHelper(context);
+        db = mSQLiteHelper.getReadableDatabase();
+
+        ArrayList<String> restored_route = null;
+        if (savedInstanceState != null && savedInstanceState.containsKey(STATE_FROM)) {
+            // Same puzzle as before Android recreated us
+            country_from_index = savedInstanceState.getInt(STATE_FROM);
+            country_to_index = savedInstanceState.getInt(STATE_TO);
+            restored_route = savedInstanceState.getStringArrayList(STATE_ROUTE);
         } else {
-            setContentView(R.layout.activity_solve_puzzle);
-            SystemBars.setUp(this);
-
-            user_progress = 0;
-
-            Intent intent = getIntent();
-            if (intent != null) {
-                level = intent.getIntExtra(MainActivity.LEVEL, 0);
-            }
-            int path_length_lower = 3 + 2 * level;
-            int path_length_upper = 4 + 2 * level;
-            if (level == 2) {
-                path_length_upper = 20;  // Not binding; current maximum in data is 9
-            }
-
-            final ActionBar actionBar = getSupportActionBar();
-            actionBar.setHomeButtonEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowHomeEnabled(true);
-
-            final Resources res = getResources();
-            countries = res.getStringArray(R.array.countries);
-            congratulations_array = res.getStringArray(R.array.correct_guess_congratulations);
-
-            final Context context = getApplicationContext();
-            MySQLiteHelper mSQLiteHelper = new MySQLiteHelper(context);
-            SQLiteDatabase db = mSQLiteHelper.getReadableDatabase();
-
             Cursor c = getSummaryCursor(path_length_lower, path_length_upper, db);
             country_from_index = c.getInt(c.getColumnIndexOrThrow(MySQLiteHelper.COL_FROM));
             country_to_index = c.getInt(c.getColumnIndexOrThrow(MySQLiteHelper.COL_TO));
-            country_from = countries[country_from_index];
-            country_to = countries[country_to_index];
-            path_length = c.getInt(c.getColumnIndexOrThrow(MySQLiteHelper.COL_PATH_LENGTH));
-            path_length_inner = path_length - 2;  // Number of countries the user has to input
             c.close();
-
-            root_country = (TextView) findViewById(R.id.countries_visited_root);
-            root_country.setText(country_from);
-            arrow = (ImageView) findViewById(R.id.countries_visited_arrow);
-            int id = getResources().getIdentifier("arrow", "drawable", getPackageName());
-            arrow.setImageResource(id);
-
-            Cursor c2 = getPathCursor(country_from_index, country_to_index, db);
-            number_of_paths = c2.getCount();
-            paths = new String[number_of_paths][path_length_inner];
-            path_indicators = new boolean[number_of_paths];  // Paths with which current answer is consistent
-            Arrays.fill(path_indicators, true);
-            String[] current_path_tokenized;
-            int i = 0;
-            String current_path;
-            while (c2.moveToNext()) {
-                current_path = c2.getString(c2.getColumnIndexOrThrow(MySQLiteHelper.COL_PATH));
-                current_path_tokenized = current_path.split(";");
-                for (int j = 0; j < path_length_inner; j++)
-                    paths[i][j] = countries[Integer.parseInt(current_path_tokenized[j])];
-                i++;
-            }
-            c2.close();
-
-            setPuzzleStatement(res);
-
-            Button buttonGiveUp = (Button) findViewById(R.id.button_give_up);
-            buttonGiveUp.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openGiveUpDialog(v);
-                }
-            });
-
-            final AutoCompleteTextView country_input = (AutoCompleteTextView) findViewById(R.id.autocomplete_country);
-
-            final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, countries);
-            country_input.setAdapter(adapter);
-            country_input.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String user_answer = adapter.getItem(position).toString();
-                    boolean user_answer_is_correct = false;
-                    boolean new_path_indicators[] = new boolean[number_of_paths];  // Default to false
-                    for (int i = 0; i < number_of_paths; i++) {
-                        if (path_indicators[i] && paths[i][user_progress] == user_answer) {
-                            user_answer_is_correct = true;
-                            new_path_indicators[i] = true;
-                        }
-                    }
-                    if (user_answer_is_correct) {
-                        user_progress++;
-                        path_indicators = new_path_indicators;
-                        addCountryVisited(context, user_answer);
-
-                        // TODO Put this in a fn, and call it for very last country seen
-                        ContentValues content = new ContentValues();
-                        content.put(MySQLiteHelper.COL_COUNTRY_NAME, user_answer);
-                        content.put(MySQLiteHelper.COL_COUNTRY_VISIT_COUNT, 1);  // TODO Get previous count and increment
-                        db.update(MySQLiteHelper.VISIT_COUNT_TABLE_NAME, content, MySQLiteHelper.COL_COUNTRY_NAME + " = ?", new String[]{user_answer});
-
-                        if (user_progress < path_length_inner) {
-                            String congratulations = congratulations_array[random.nextInt(congratulations_array.length)];
-                            Toast.makeText(context, congratulations, Toast.LENGTH_SHORT).show();
-                        } else {
-                            // Done solving puzzle: make country_input invisible; close keyboard
-                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(country_input.getWindowToken(), 0);
-                            country_input.setVisibility(View.GONE);
-
-                            reachedDestinationCountry(context, res);
-
-                            String greatGuide = res.getString(R.string.great_guide);
-                            Toast.makeText(context, greatGuide, Toast.LENGTH_LONG).show();
-
-                            LinearLayout buttons = (LinearLayout) findViewById(R.id.buttons);
-                            buttons.setVisibility(View.VISIBLE);
-                        }
-                    } else {
-                        Toast.makeText(context, "Sorry, " + user_answer + " won\'t help.", Toast.LENGTH_LONG).show();
-                    }
-                    country_input.setText("");
-                }
-            });
         }
+        country_from = countries[country_from_index];
+        country_to = countries[country_to_index];
+
+        root_country = (TextView) findViewById(R.id.countries_visited_root);
+        root_country.setText(country_from);
+        arrow = (ImageView) findViewById(R.id.countries_visited_arrow);
+        int id = getResources().getIdentifier("arrow", "drawable", getPackageName());
+        arrow.setImageResource(id);
+
+        Cursor c2 = getPathCursor(country_from_index, country_to_index, db);
+        number_of_paths = c2.getCount();
+        String[][] paths_tokenized = new String[number_of_paths][];
+        int i = 0;
+        while (c2.moveToNext()) {
+            paths_tokenized[i] = c2.getString(c2.getColumnIndexOrThrow(MySQLiteHelper.COL_PATH)).split(";");
+            i++;
+        }
+        c2.close();
+        // Every shortest path between the same two countries has the same length
+        path_length_inner = paths_tokenized[0].length;  // Number of countries the user has to input
+        path_length = path_length_inner + 2;
+        paths = new String[number_of_paths][path_length_inner];
+        for (i = 0; i < number_of_paths; i++) {
+            for (int j = 0; j < path_length_inner; j++) {
+                paths[i][j] = countries[Integer.parseInt(paths_tokenized[i][j])];
+            }
+        }
+        path_indicators = new boolean[number_of_paths];  // Paths with which current answer is consistent
+        Arrays.fill(path_indicators, true);
+        user_progress = 0;
+        user_route.clear();
+
+        setPuzzleStatement(res);
+
+        Button buttonGiveUp = (Button) findViewById(R.id.button_give_up);
+        buttonGiveUp.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openGiveUpDialog(v);
+            }
+        });
+
+        country_input = (AutoCompleteTextView) findViewById(R.id.autocomplete_country);
+
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, countries);
+        country_input.setAdapter(adapter);
+        country_input.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                countryEntered(adapter.getItem(position).toString());
+            }
+        });
+
+        if (restored_route != null) {
+            // Put back the countries the user had already entered, without repeating
+            // the toasts or the database updates
+            for (String country : restored_route) {
+                if (!moveTo(country)) {
+                    break;  // Shouldn't happen: the route was valid when it was saved
+                }
+            }
+        }
+    }
+
+    private void countryEntered(String user_answer) {
+        final Context context = getApplicationContext();
+        final Resources res = getResources();
+        if (moveTo(user_answer)) {
+            // TODO Put this in a fn, and call it for very last country seen
+            ContentValues content = new ContentValues();
+            content.put(MySQLiteHelper.COL_COUNTRY_NAME, user_answer);
+            content.put(MySQLiteHelper.COL_COUNTRY_VISIT_COUNT, 1);  // TODO Get previous count and increment
+            db.update(MySQLiteHelper.VISIT_COUNT_TABLE_NAME, content, MySQLiteHelper.COL_COUNTRY_NAME + " = ?", new String[]{user_answer});
+
+            if (user_progress < path_length_inner) {
+                String congratulations = congratulations_array[random.nextInt(congratulations_array.length)];
+                Toast.makeText(context, congratulations, Toast.LENGTH_SHORT).show();
+            } else {
+                String greatGuide = res.getString(R.string.great_guide);
+                Toast.makeText(context, greatGuide, Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(context, "Sorry, " + user_answer + " won\'t help.", Toast.LENGTH_LONG).show();
+        }
+        country_input.setText("");
+    }
+
+    /**
+     * Moves the user to country if it's the next country on a shortest path consistent with the
+     * countries entered so far, and updates the route on screen. Returns whether it was.
+     */
+    private boolean moveTo(String country) {
+        boolean correct = false;
+        boolean[] new_path_indicators = new boolean[number_of_paths];  // Default to false
+        for (int i = 0; i < number_of_paths; i++) {
+            if (path_indicators[i] && paths[i][user_progress].equals(country)) {
+                correct = true;
+                new_path_indicators[i] = true;
+            }
+        }
+        if (!correct) {
+            return false;
+        }
+        user_progress++;
+        user_route.add(country);
+        path_indicators = new_path_indicators;
+        addCountryVisited(getApplicationContext(), country);
+
+        if (user_progress >= path_length_inner) {
+            // Done solving puzzle: make country_input invisible; close keyboard
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(country_input.getWindowToken(), 0);
+            country_input.setVisibility(View.GONE);
+
+            reachedDestinationCountry(getApplicationContext(), getResources());
+
+            LinearLayout buttons = (LinearLayout) findViewById(R.id.buttons);
+            buttons.setVisibility(View.VISIBLE);
+        }
+        return true;
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);  // TODO Am I using this?
-        savedInstanceState.putString(COUNTRY_TO, country_to);
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putInt(STATE_FROM, country_from_index);
+        savedInstanceState.putInt(STATE_TO, country_to_index);
+        savedInstanceState.putStringArrayList(STATE_ROUTE, new ArrayList<>(user_route));
     }
 
     public void backToMain(View view) {
@@ -279,7 +325,7 @@ public class SolvePuzzle extends AppCompatActivity {
 
     public void newPuzzle(View view) {
         Intent intent = new Intent(this, SolvePuzzle.class);
-        intent.putExtra(MainActivity.LEVEL, SolvePuzzle.level);
+        intent.putExtra(MainActivity.LEVEL, level);
         startActivity(intent);
     }
 
