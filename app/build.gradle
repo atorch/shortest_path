@@ -42,3 +42,11 @@ dependencies {
     testImplementation libs.junit
     testImplementation libs.robolectric
 }
+
+// Print the full stack trace of failing tests in the build log (CI keeps nothing else)
+tasks.withType(Test).configureEach {
+    testLogging {
+        events 'failed'
+        exceptionFormat = 'full'
+    }
+}
