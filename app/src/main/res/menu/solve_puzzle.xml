@@ -3,4 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="atorch.shortestpaths.SolvePuzzle" >
 
+    <item
+        android:id="@+id/action_map_hint"
+        android:title="@string/action_map_hint"
+        app:showAsAction="ifRoom|withText" />
+
 </menu>
