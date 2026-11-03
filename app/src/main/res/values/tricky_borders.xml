@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+        Borders that come up in puzzle solutions but that players often don't know about.
+        Format: "Country A|Country B|Note". The names must match the "countries" array in
+        strings.xml exactly, in either order. The note appears on the route when the player
+        crosses that border.
+    -->
+    <string-array name="tricky_borders">
+        <item>Morocco|Spain|Spain and Morocco share a land border: the Spanish cities of Ceuta and Melilla are on the North African coast.</item>
+        <item>Azerbaijan|Turkey|Turkey borders Azerbaijan through Nakhchivan, a part of Azerbaijan cut off from the rest of the country by Armenia.</item>
+        <item>Afghanistan|People\'s Republic of China|Afghanistan reaches China through the Wakhan Corridor, a long, narrow strip of land high in the Pamir mountains.</item>
+        <item>Lithuania|Russia|Lithuania borders Russia at Kaliningrad, a part of Russia on the Baltic coast between Lithuania and Poland.</item>
+        <item>Norway|Russia|Norway and Russia share a short border in the far north, above the Arctic Circle.</item>
+        <item>North Korea|Russia|North Korea and Russia share a very short border along the Tumen River, near the Sea of Japan.</item>
+        <item>Botswana|Zambia|Botswana and Zambia meet at Kazungula on the Zambezi River, where their border is only a few hundred metres long.</item>
+        <item>Namibia|Zambia|Namibia reaches Zambia through the Caprivi Strip, a long, narrow arm of land in Namibia\'s north-east.</item>
+        <item>France|Kingdom of the Netherlands|France and the Kingdom of the Netherlands share the Caribbean island of Saint Martin.</item>
+        <item>Cyprus|United Kingdom|The United Kingdom borders Cyprus through Akrotiri and Dhekelia, two British bases on the island.</item>
+    </string-array>
+
+    <!--
+        Pairs that look like neighbours but aren't in the puzzle's map. Same format as above.
+        The note appears when the player guesses one of them while standing in the other.
+    -->
+    <string-array name="missing_borders">
+        <item>Mauritania|Morocco|Morocco and Mauritania don\'t share a border in this puzzle: Western Sahara lies between them.</item>
+    </string-array>
+
+    <!-- Shown after a few wrong guesses when every way forward crosses one of the borders above. -->
+    <string name="tricky_border_hint">Hint: %s has a neighbour that\'s easy to overlook.</string>
+
+</resources>
