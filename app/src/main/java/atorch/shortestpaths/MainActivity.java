@@ -9,7 +9,6 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -17,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.text.HtmlCompat;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -167,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        SystemBars.setUp(this);
 
         context = getApplicationContext();
         mSQLiteHelper = new MySQLiteHelper(context);
@@ -208,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
         String not_yet_visited = String.format(not_yet_visited_format, countries[0], countries[1], countries[2]);
 
         text += "\n\n" + not_yet_visited;
-        statement.setText(Html.fromHtml(text));
+        statement.setText(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY));
 
         TextView repoLink = findViewById(R.id.repo_link);
         repoLink.setMovementMethod(LinkMovementMethod.getInstance());
