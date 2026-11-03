@@ -12,7 +12,6 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +28,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.text.HtmlCompat;
 
 public class SolvePuzzle extends AppCompatActivity {
 
@@ -76,7 +76,7 @@ public class SolvePuzzle extends AppCompatActivity {
         String puzzle_statement_text = String.format(res.getString(R.string.puzzle_statement_format_string), country_from, country_to);
         String path_length_statement_text = res.getQuantityString(R.plurals.path_length_statement, path_length_inner, path_length_inner);
         TextView puzzle_statement = (TextView) findViewById(R.id.puzzle_statement);
-        puzzle_statement.setText(Html.fromHtml(puzzle_statement_text));
+        puzzle_statement.setText(HtmlCompat.fromHtml(puzzle_statement_text, HtmlCompat.FROM_HTML_MODE_LEGACY));
         TextView path_length_statement = (TextView) findViewById(R.id.path_length_statement);
         path_length_statement.setText(path_length_statement_text);
     }
@@ -144,6 +144,7 @@ public class SolvePuzzle extends AppCompatActivity {
             country_to = savedInstanceState.getString(COUNTRY_TO);
         } else {
             setContentView(R.layout.activity_solve_puzzle);
+            SystemBars.setUp(this);
 
             user_progress = 0;
 

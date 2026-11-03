@@ -1,0 +1,19 @@
+# Opens one grouped pull request a month when AndroidX, the Android Gradle plugin
+# or the GitHub Actions used by CI fall behind, so warnings like issue #7 don't pile up.
+version: 2
+updates:
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      gradle:
+        patterns: ["*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      github-actions:
+        patterns: ["*"]
