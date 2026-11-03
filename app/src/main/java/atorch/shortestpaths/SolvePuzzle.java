@@ -11,8 +11,11 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,6 +56,12 @@ public class SolvePuzzle extends AppCompatActivity {
     static String paths[][];  // Paths[i] is an array of country names
     static boolean path_indicators[];  // When user's guess is consistent with paths[i], path_indicators[i] will be true
     static int user_progress;  // How far along path user has traveled
+    static String current_country;  // Where the user is now: country_from, then their last correct answer
+
+    static TrickyBorders tricky_borders;
+    static int wrong_guesses_this_step;
+    static boolean hint_shown_this_step;
+    private static final int WRONG_GUESSES_BEFORE_HINT = 2;
 
     public static final Random random = new Random();
 
@@ -81,9 +90,71 @@ public class SolvePuzzle extends AppCompatActivity {
         path_length_statement.setText(path_length_statement_text);
     }
 
+    private void addCrossingNote(Context context, LinearLayout countries_visited, String from, String to) {
+        // If going from -> to crosses a border players often don't know about (e.g. Spain -> Morocco),
+        // explain it on the route, between the arrow and the country we just reached
+        String note = tricky_borders.crossingNote(from, to);
+        if (note == null) {
+            return;
+        }
+        TextView note_view = new TextView(context);
+        note_view.setText(note);
+        note_view.setTextColor(root_country.getCurrentTextColor());
+        note_view.setTypeface(null, Typeface.ITALIC);
+        note_view.setTextSize(TypedValue.COMPLEX_UNIT_PX, root_country.getTextSize() * 0.85f);
+        note_view.setGravity(Gravity.CENTER_HORIZONTAL);
+        int padding = getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin_quarter);
+        note_view.setPadding(padding, padding, padding, padding);
+        note_view.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        countries_visited.addView(note_view);
+    }
+
+    private boolean everyWayForwardIsTricky() {
+        // True if every shortest path still consistent with the user's answers leaves
+        // current_country through a tricky border, i.e. the user can't make progress without it
+        boolean any_path = false;
+        for (int i = 0; i < number_of_paths; i++) {
+            if (!path_indicators[i]) {
+                continue;
+            }
+            any_path = true;
+            if (!tricky_borders.isTricky(current_country, paths[i][user_progress])) {
+                return false;
+            }
+        }
+        return any_path;
+    }
+
+    private void showBorderHint(String text) {
+        TextView border_hint = (TextView) findViewById(R.id.border_hint);
+        border_hint.setText(text);
+        border_hint.setVisibility(View.VISIBLE);
+    }
+
+    private void onWrongGuess(Resources res, String user_answer) {
+        wrong_guesses_this_step++;
+        String missing_border_note = tricky_borders.missingBorderNote(current_country, user_answer);
+        if (missing_border_note != null) {
+            // E.g. Morocco -> Mauritania: explain why they aren't neighbours here
+            showBorderHint(missing_border_note);
+        } else if (!hint_shown_this_step && wrong_guesses_this_step >= WRONG_GUESSES_BEFORE_HINT && everyWayForwardIsTricky()) {
+            showBorderHint(String.format(res.getString(R.string.tricky_border_hint), current_country));
+            hint_shown_this_step = true;
+        }
+    }
+
+    private void onCorrectGuess(String user_answer) {
+        current_country = user_answer;
+        wrong_guesses_this_step = 0;
+        hint_shown_this_step = false;
+        findViewById(R.id.border_hint).setVisibility(View.GONE);
+    }
+
     private void addCountryVisited(Context context, String user_answer) {
         // Called each time user enters a correct answer
         LinearLayout countries_visited = (LinearLayout) findViewById(R.id.countries_visited);
+        addCrossingNote(context, countries_visited, current_country, user_answer);
         TextView new_country_visited = new TextView(context);
         new_country_visited.setText(user_answer);
         new_country_visited.setLayoutParams(root_country.getLayoutParams());
@@ -124,6 +195,7 @@ public class SolvePuzzle extends AppCompatActivity {
         // Update the UI when the user has correctly entered the last country before destination,
         // which means we've reached the destination (we don't ask the user to input the destination country)
         LinearLayout countries_visited = (LinearLayout) findViewById(R.id.countries_visited);
+        addCrossingNote(context, countries_visited, current_country, country_to);
         TextView destination_country = new TextView(context);
         destination_country.setText(country_to);
         destination_country.setLayoutParams(root_country.getLayoutParams());
@@ -165,6 +237,9 @@ public class SolvePuzzle extends AppCompatActivity {
             final Resources res = getResources();
             countries = res.getStringArray(R.array.countries);
             congratulations_array = res.getStringArray(R.array.correct_guess_congratulations);
+            tricky_borders = new TrickyBorders(res);
+            wrong_guesses_this_step = 0;
+            hint_shown_this_step = false;
 
             final Context context = getApplicationContext();
             MySQLiteHelper mSQLiteHelper = new MySQLiteHelper(context);
@@ -175,6 +250,7 @@ public class SolvePuzzle extends AppCompatActivity {
             country_to_index = c.getInt(c.getColumnIndexOrThrow(MySQLiteHelper.COL_TO));
             country_from = countries[country_from_index];
             country_to = countries[country_to_index];
+            current_country = country_from;
             path_length = c.getInt(c.getColumnIndexOrThrow(MySQLiteHelper.COL_PATH_LENGTH));
             path_length_inner = path_length - 2;  // Number of countries the user has to input
             c.close();
@@ -232,6 +308,7 @@ public class SolvePuzzle extends AppCompatActivity {
                         user_progress++;
                         path_indicators = new_path_indicators;
                         addCountryVisited(context, user_answer);
+                        onCorrectGuess(user_answer);
 
                         // TODO Put this in a fn, and call it for very last country seen
                         ContentValues content = new ContentValues();
@@ -258,6 +335,7 @@ public class SolvePuzzle extends AppCompatActivity {
                         }
                     } else {
                         Toast.makeText(context, "Sorry, " + user_answer + " won\'t help.", Toast.LENGTH_LONG).show();
+                        onWrongGuess(res, user_answer);
                     }
                     country_input.setText("");
                 }
