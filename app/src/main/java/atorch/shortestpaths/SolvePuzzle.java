@@ -1,6 +1,7 @@
 package atorch.shortestpaths;
 
 import android.content.ContentValues;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -53,6 +54,7 @@ public class SolvePuzzle extends AppCompatActivity {
     static String paths[][];  // Paths[i] is an array of country names
     static boolean path_indicators[];  // When user's guess is consistent with paths[i], path_indicators[i] will be true
     static int user_progress;  // How far along path user has traveled
+    static ArrayList<String> user_route = new ArrayList<>();  // Countries the user has correctly entered, in order
 
     public static final Random random = new Random();
 
@@ -109,6 +111,13 @@ public class SolvePuzzle extends AppCompatActivity {
                     }
                 }
         );
+        builder.setNeutralButton(R.string.give_up_show_me,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        showAnswer();
+                    }
+                }
+        );
         builder.setNegativeButton("Keep Going",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -146,6 +155,7 @@ public class SolvePuzzle extends AppCompatActivity {
             setContentView(R.layout.activity_solve_puzzle);
 
             user_progress = 0;
+            user_route.clear();
 
             Intent intent = getIntent();
             if (intent != null) {
@@ -230,6 +240,7 @@ public class SolvePuzzle extends AppCompatActivity {
                     }
                     if (user_answer_is_correct) {
                         user_progress++;
+                        user_route.add(user_answer);
                         path_indicators = new_path_indicators;
                         addCountryVisited(context, user_answer);
 
@@ -282,6 +293,22 @@ public class SolvePuzzle extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void reviewMap(View view) {
+        startActivity(ReviewMap.routeIntent(this, ReviewMap.MODE_REVIEW, country_from, country_to, user_route));
+    }
+
+    private void showAnswer() {
+        // Any shortest path that is consistent with what the user has entered so far
+        for (int i = 0; i < number_of_paths; i++) {
+            if (path_indicators[i]) {
+                startActivity(ReviewMap.routeIntent(this, ReviewMap.MODE_ANSWER, country_from, country_to,
+                        Arrays.asList(paths[i])));
+                finish();  // No sneaking back to finish the puzzle once you've seen the answer
+                return;
+            }
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.solve_puzzle, menu);
@@ -290,6 +317,12 @@ public class SolvePuzzle extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_map_hint) {
+            boolean solved = user_progress >= path_length_inner;
+            int mode = solved ? ReviewMap.MODE_REVIEW : ReviewMap.MODE_HINT;
+            startActivity(ReviewMap.routeIntent(this, mode, country_from, country_to, user_route));
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 }

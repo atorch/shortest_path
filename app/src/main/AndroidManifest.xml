@@ -27,6 +27,11 @@
 	    android:exported="false"
 	    tools:node="merge">
         </activity>
+        <activity
+            android:name=".ReviewMap"
+            android:label="@string/title_activity_review_map"
+            android:exported="false">
+        </activity>
     </application>
 
 </manifest>

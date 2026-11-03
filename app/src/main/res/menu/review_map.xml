@@ -3,4 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="atorch.shortestpaths.ReviewMap" >
 
+    <item
+        android:id="@+id/action_show_names"
+        android:checkable="true"
+        android:checked="true"
+        android:title="@string/action_show_names"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_show_world"
+        android:title="@string/action_show_world"
+        app:showAsAction="never" />
+
 </menu>
