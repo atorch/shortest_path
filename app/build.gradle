@@ -43,8 +43,13 @@ dependencies {
     testImplementation libs.robolectric
 }
 
-// Print the full stack trace of failing tests in the build log (CI keeps nothing else)
 tasks.withType(Test).configureEach {
+    // Robolectric sets up Android 16's file descriptors through JDK internals,
+    // which JDK 17+ only allows when they're exported/opened explicitly
+    jvmArgs '--add-exports=java.base/jdk.internal.access=ALL-UNNAMED',
+            '--add-opens=java.base/java.io=ALL-UNNAMED'
+
+    // Print the full stack trace of failing tests in the build log (CI keeps nothing else)
     testLogging {
         events 'failed'
         exceptionFormat = 'full'
