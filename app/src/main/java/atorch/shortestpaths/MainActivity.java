@@ -163,6 +163,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void studyMap(View view) {
+        startActivity(ReviewMap.studyIntent(this));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

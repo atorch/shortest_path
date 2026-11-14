@@ -118,6 +118,13 @@ public class SolvePuzzle extends AppCompatActivity {
                     }
                 }
         );
+        builder.setNeutralButton(R.string.give_up_show_me,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        showAnswer();
+                    }
+                }
+        );
         builder.setNegativeButton("Keep Going",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -329,6 +336,22 @@ public class SolvePuzzle extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void reviewMap(View view) {
+        startActivity(ReviewMap.routeIntent(this, ReviewMap.MODE_REVIEW, country_from, country_to, user_route));
+    }
+
+    private void showAnswer() {
+        // Any shortest path that is consistent with what the user has entered so far
+        for (int i = 0; i < number_of_paths; i++) {
+            if (path_indicators[i]) {
+                startActivity(ReviewMap.routeIntent(this, ReviewMap.MODE_ANSWER, country_from, country_to,
+                        Arrays.asList(paths[i])));
+                finish();  // No sneaking back to finish the puzzle once you've seen the answer
+                return;
+            }
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.solve_puzzle, menu);
@@ -337,6 +360,12 @@ public class SolvePuzzle extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_map_hint) {
+            boolean solved = user_progress >= path_length_inner;
+            int mode = solved ? ReviewMap.MODE_REVIEW : ReviewMap.MODE_HINT;
+            startActivity(ReviewMap.routeIntent(this, mode, country_from, country_to, user_route));
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 }
