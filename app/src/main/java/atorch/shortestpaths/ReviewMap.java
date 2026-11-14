@@ -82,6 +82,7 @@ public class ReviewMap extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review_map);
+        SystemBars.setUp(this);  // Keeps the legend below the action bar and the status text above the navigation bar
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
